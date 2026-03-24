@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alpabasa | Every Filipino child, a reader</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Roboto:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --alpabasa-blue: #4a90e2;
+            --btn-teal: #85d8ce;
+            --btn-pink: #f1c4be;
+        }
+
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            margin: 0; padding: 0;
+        }
+
+        /* --- NAVIGATION STYLING --- */
+        .navbar {
+            background-color: #fff;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            min-height: 80px;
+        }
+
+        .navbar-brand img {
+            height: 55px; 
+            width: auto;
+        }
+
+        .nav-link {
+            color: #444 !important;
+            font-weight: 800;
+            font-size: 13px;
+            padding: 10px 12px !important;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--alpabasa-blue) !important;
+        }
+
+        /* Login Button */
+        .btn-login-header {
+            background-color: #edf0e5 !important;
+            color: #000 !important;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 8px;
+            padding: 8px 20px !important;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        /* Desktop Layout Fixes */
+        @media (min-width: 992px) {
+            .navbar-expand-lg .navbar-nav {
+                align-items: center;
+            }
+            .btn-login-header {
+                margin-left: 20px;
+            }
+        }
+
+        /* Mobile Layout Fixes */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: #fff;
+                padding: 20px;
+                border-top: 1px solid #eee;
+                margin-top: 10px;
+            }
+            .nav-item {
+                border-bottom: 1px solid #f9f9f9;
+                padding: 5px 0;
+            }
+            .btn-login-header {
+                margin-left: 0;
+                margin-top: 15px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Hero Section */
+        .hero-section { 
+            padding: 80px 0;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 50%, #c2e9fb 100%);
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-title { font-weight: 900; color: #fff; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
+        .hero-subtitle { color: var(--alpabasa-blue); font-weight: 800; font-size: clamp(1.5rem, 4vw, 2.5rem); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container"> 
+        <a class="navbar-brand" href="#">
+            <img src="https://www.alpabasa.com/wp-content/uploads/2020/07/alpabasa.png" alt="Alpabasa">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#alpabasaNav" aria-controls="alpabasaNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="alpabasaNav">
+            <ul class="navbar-nav ms-auto"> 
+                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Filipino Videos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">English Videos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">FAQ</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                <li class="nav-item">
+                    <a href="/login" class="btn-login-header">LOGIN</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="hero-title">The Alpabasa Vision:</h1>
+                <h2 class="hero-subtitle">Every Filipino child, a reader</h2>
+                <p class="text-white fs-5 mt-3 fw-semibold">
+                    Learning to read and eventually reading to learn will give them a good start.
+                </p>
+                <div class="mt-4">
+                    <button class="btn btn-lg text-white fw-bold px-4 rounded-pill me-2" style="background-color: var(--btn-teal); border:none;">Filipino Videos</button>
+                    <button class="btn btn-lg text-white fw-bold px-4 rounded-pill" style="background-color: var(--btn-pink); border:none;">English Videos</button>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="https://alpabasa.com/wp-content/uploads/2021/05/hero-image.png" class="img-fluid" style="max-width: 80%;" alt="Alpabasa">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
