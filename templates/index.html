@@ -1,160 +1,247 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alpabasa | Every Filipino child, a reader</title>
+    <title>Programang KAAGAPAY | Alpabasa</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <style>
         :root {
-            --alpabasa-blue: #4a90e2;
-            --btn-teal: #85d8ce;
-            --btn-pink: #f1c4be;
+            --alpabasa-blue: #2d6fb4; 
+            --kaagapay-orange: #f47920; 
+            --btn-teal: #4db6ac; 
+            --light-bg: #f1f4f8; 
         }
 
         body { 
             font-family: 'Nunito', sans-serif; 
-            margin: 0; padding: 0;
+            margin: 0; padding: 0; 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
 
-        /* --- NAVIGATION STYLING --- */
+        /* --- STICKY HEADER --- */
         .navbar {
-            background-color: #fff;
-            padding: 10px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            min-height: 80px;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            height: 85px;
+            z-index: 1100;
+            transition: 0.4s ease;
         }
 
-        .navbar-brand img {
-            height: 55px; 
-            width: auto;
+        .navbar.scrolled {
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
-        .nav-link {
-            color: #444 !important;
-            font-weight: 800;
-            font-size: 13px;
-            padding: 10px 12px !important;
-            text-transform: uppercase;
-            transition: color 0.3s;
+        .navbar-brand h3 {
+            color: var(--kaagapay-orange);
+            font-weight: 900;
+            margin: 0;
         }
 
-        .nav-link:hover {
-            color: var(--alpabasa-blue) !important;
+        .nav-link { 
+            color: #333 !important; 
+            font-weight: 800; 
+            font-size: 14px; 
+            text-transform: uppercase; 
         }
 
-        /* Login Button */
         .btn-login-header {
-            background-color: #edf0e5 !important;
+            background-color: #f0f4e8 !important; 
             color: #000 !important;
-            font-family: 'Roboto', sans-serif;
-            font-weight: bold;
-            font-size: 13px;
-            border-radius: 8px;
-            padding: 8px 20px !important;
-            border: none;
-            text-decoration: none;
-            display: inline-block;
-            margin-left: 10px;
+            font-weight: 800; 
+            border-radius: 8px; 
+            padding: 8px 24px !important;
+            text-decoration: none; 
+            transition: 0.3s;
         }
 
-        /* Desktop Layout Fixes */
-        @media (min-width: 992px) {
-            .navbar-expand-lg .navbar-nav {
-                align-items: center;
-            }
-            .btn-login-header {
-                margin-left: 20px;
-            }
-        }
-
-        /* Mobile Layout Fixes */
-        @media (max-width: 991px) {
-            .navbar-collapse {
-                background: #fff;
-                padding: 20px;
-                border-top: 1px solid #eee;
-                margin-top: 10px;
-            }
-            .nav-item {
-                border-bottom: 1px solid #f9f9f9;
-                padding: 5px 0;
-            }
-            .btn-login-header {
-                margin-left: 0;
-                margin-top: 15px;
-                width: 100%;
-                text-align: center;
-            }
-        }
-
-        /* Hero Section */
+        /* --- HERO SECTION --- */
         .hero-section { 
-            padding: 80px 0;
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 50%, #c2e9fb 100%);
-            min-height: 500px;
-            display: flex;
-            align-items: center;
+            position: relative; 
+            width: 100%; 
+            height: 110vh; 
+            min-height: 600px;
+            display: flex; 
+            align-items: center; 
+            /* DITO ANG FIX PARA SA BACKGROUND IMAGE */
+            /* Siguraduhin na may file na 'rightside.png' sa static/images/ folder mo */
+            background-image: url("{% static 'images/homeback.png' %}");
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        .hero-title { font-weight: 900; color: #fff; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; }
-        .hero-subtitle { color: var(--alpabasa-blue); font-weight: 800; font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        .hero-section::before {
+            content: ""; 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 100%); 
+            z-index: 1;
+        }
+
+        .hero-content { position: relative; z-index: 2; padding: 0 8%; }
+        .hero-title { font-weight: 900; color: var(--kaagapay-orange); font-size: clamp(2.5rem, 6vw, 4.5rem); }
+        .hero-subtitle { color: var(--alpabasa-blue); font-weight: 900; font-size: clamp(1.2rem, 3vw, 2rem); }
+        
+        .btn-main {
+            background-color: var(--btn-teal); 
+            color: white; 
+            font-weight: 800;
+            padding: 15px 45px; 
+            border-radius: 50px; 
+            text-decoration: none;
+            display: inline-block; 
+            transition: 0.3s; 
+            box-shadow: 0 5px 15px rgba(77,182,172,0.4);
+        }
+
+        /* --- SECTIONS --- */
+        section { padding: 100px 0; }
+        .section-title { color: var(--kaagapay-orange); font-weight: 900; font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px; }
+
+        .bakit-section { background-color: #ffffff; }
+        .teacher-img { max-width: 100%; filter: drop-shadow(5px 10px 15px rgba(0,0,0,0.1)); }
+
+        /* --- ABOUT PREVIEW SECTION --- */
+        .about-preview-section { 
+            background-color: var(--light-bg); 
+            border-top: 1px solid #e0e6ed;
+            border-bottom: 1px solid #e0e6ed;
+        }
+
+        .about-img-container img {
+            max-width: 90%;
+            height: auto;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); 
+        }
+
+        .btn-outline-kaagapay {
+            border: 2px solid var(--kaagapay-orange);
+            color: var(--kaagapay-orange);
+            padding: 12px 35px; 
+            border-radius: 50px; 
+            font-weight: 800;
+            text-decoration: none; 
+            transition: 0.3s;
+            display: inline-block;
+        }
+        .btn-outline-kaagapay:hover {
+            background-color: var(--kaagapay-orange);
+            color: white;
+        }
+
+        @media (max-width: 991px) {
+            .hero-section { text-align: center; }
+            .section-title { text-align: center; }
+            .teacher-img { margin-bottom: 30px; }
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg sticky-top">
-    <div class="container"> 
-        <a class="navbar-brand" href="#">
-            <img src="https://www.alpabasa.com/wp-content/uploads/2020/07/alpabasa.png" alt="Alpabasa">
+<nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
+    <div class="container-fluid px-4"> 
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <h3>KAAGAPAY</h3>
         </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#alpabasaNav" aria-controls="alpabasaNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#alpabasaNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="alpabasaNav">
-            <ul class="navbar-nav ms-auto"> 
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Filipino Videos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">English Videos</a></li>
+            <ul class="navbar-nav ms-auto align-items-center"> 
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about-section">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Videos</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">FAQ</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                <li class="nav-item">
-                    <a href="/login" class="btn-login-header">LOGIN</a>
-                </li>
+                <li class="nav-item ms-lg-3"><a href="/login" class="btn-login-header">LOGIN</a></li>
             </ul>
         </div>
     </div>
 </nav>
 
-
-
 <section class="hero-section">
+    <div class="container-fluid hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="hero-title">Programang KAAGAPAY</h1>
+                <h2 class="hero-subtitle">Every Filipino child, a reader</h2>
+                <p class="fs-5 fw-bold text-dark mb-4">Isang hakbang tungo sa mas maliwanag na kinabukasan sa pamamagitan ng pagbasa at pag-unawa.</p>
+                <a href="#" class="btn-main">Simulan ang Pagkatuto</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bakit-section">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="hero-title">The Alpabasa Vision:</h1>
-                <h2 class="hero-subtitle">Every Filipino child, a reader</h2>
-                <p class="text-white fs-5 mt-3 fw-semibold">
-                    Learning to read and eventually reading to learn will give them a good start.
-                </p>
-                <div class="mt-4">
-                    <button class="btn btn-lg text-white fw-bold px-4 rounded-pill me-2" style="background-color: var(--btn-teal); border:none;">Filipino Videos</button>
-                    <button class="btn btn-lg text-white fw-bold px-4 rounded-pill" style="background-color: var(--btn-pink); border:none;">English Videos</button>
-                </div>
+            <div class="col-lg-5 text-center" data-aos="zoom-in">
+                <img src="{% static 'images/rightside.png' %}" alt="Teacher Animation" class="teacher-img">
             </div>
-            <div class="col-lg-6 text-center">
-                <img src="https://alpabasa.com/wp-content/uploads/2021/05/hero-image.png" class="img-fluid" style="max-width: 80%;" alt="Alpabasa">
+            <div class="col-lg-7" data-aos="fade-left">
+                <h2 class="section-title">Bakit KAAGAPAY?</h2>
+                <p class="bakit-lead fs-4 fw-bold text-primary mb-3">Ang pagbasa ang susi sa bawat pangarap.</p>
+                <p class="fst-italic border-start border-4 border-warning ps-3" style="font-size: 1.2rem;">
+                    "KAAGAPAY: Sa pagbasa’y walang iwanan, sabay-sabay sa kaunlaran at paghubog para sa kahusayan!"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-preview-section" id="about-section">
+    <div class="container">
+        <div class="row align-items-center flex-row-reverse">
+            <div class="col-lg-5 about-img-container text-center" data-aos="fade-left">
+                <img src="{% static 'images/about.png' %}" alt="About KAAGAPAY">
+            </div>
+            <div class="col-lg-7" data-aos="fade-right">
+                <h2 class="section-title">Tungkol sa Amin</h2>
+                <p class="fs-5 mb-4 text-secondary">
+                    Ang Programang KAAGAPAY ay binuo upang magbigay ng de-kalidad na kagamitan sa pagbasa para sa mga batang Pilipino. Layunin naming gawing masaya at madali ang proseso ng pagkatuto gamit ang teknolohiya at sining.
+                </p>
+                <a href="{% url 'about_page' %}" class="btn-outline-kaagapay">View More</a>
             </div>
         </div>
     </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            const navbarHeight = document.getElementById('mainNavbar').offsetHeight;
+
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - navbarHeight,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    window.addEventListener('scroll', function() {
+        const nav = document.getElementById('mainNavbar');
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    });
+</script>
 </body>
 </html>
