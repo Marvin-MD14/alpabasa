@@ -5,3 +5,6 @@ def home(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def aralin(request):
+    return render(request, 'aralin.html')

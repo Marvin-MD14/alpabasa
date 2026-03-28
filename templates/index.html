@@ -1,247 +1,265 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programang KAAGAPAY | Alpabasa</title>
+
+{% block extra_css %}
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --orange: #ff8a00;
+        --teal: #00b4d8;
+        --blue: #0d6efd;
+        --soft-bg: #fdfdfd;
+        --dark-footer: #1a1c1e;
+    }
+
+    body { font-family: 'Quicksand', sans-serif; overflow-x: hidden; scroll-behavior: smooth; background-color: var(--soft-bg); }
+
+    /* Hero Section */
+    .hero-section { 
+        height: 100vh; display: flex; align-items: center;
+        background: linear-gradient(90deg, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.2) 100%), 
+                    url("{% static 'images/homeback.png' %}");
+        background-size: cover; background-position: center;
+    }
+    .hero-title { font-weight: 900; color: var(--orange); font-size: clamp(3rem, 7vw, 5rem); line-height: 1.1; }
+
+    /* Mascot - No Border & Transparent */
+    .guide-character {
+        position: fixed; bottom: 30px; right: 30px; width: 160px; z-index: 1000;
+        animation: float 3s ease-in-out infinite; cursor: pointer;
+    }
+    .guide-character img { 
+        border: none !important; 
+        box-shadow: none !important; 
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    }
     
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Roboto:wght@700&display=swap" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .speech-bubble {
+        position: absolute; top: -85px; left: -140px; background: white;
+        padding: 15px 20px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        font-weight: 800; font-size: 0.95rem; width: 250px; text-align: center;
+        border: 3px solid var(--teal); color: var(--blue); display: none;
+    }
+
+    /* Grids */
+    .learning-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 12px; padding: 20px 0;
+    }
+    .small-card {
+        background: white; border-radius: 22px; height: 120px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.04); transition: 0.3s;
+        border: 2px solid #f0f0f0; cursor: pointer; text-decoration: none !important;
+    }
+    .small-card:hover { transform: translateY(-8px); border-color: var(--teal); background: #f0f9ff; }
     
-    <style>
-        :root {
-            --alpabasa-blue: #2d6fb4; 
-            --kaagapay-orange: #f47920; 
-            --btn-teal: #4db6ac; 
-            --light-bg: #f1f4f8; 
-        }
+    .display-char { font-size: 2.5rem; font-weight: 900; line-height: 1; margin-bottom: 5px; }
+    .char-label { font-size: 0.7rem; font-weight: 800; color: #999; text-transform: uppercase; }
 
-        body { 
-            font-family: 'Nunito', sans-serif; 
-            margin: 0; padding: 0; 
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+    /* Feature Section Images */
+    .feature-img { 
+        width: 100%; max-width: 500px; border: none !important; 
+        filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+        transition: 0.5s;
+    }
+    .feature-img:hover { transform: scale(1.05); }
 
-        /* --- STICKY HEADER --- */
-        .navbar {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            height: 85px;
-            z-index: 1100;
-            transition: 0.4s ease;
-        }
+    /* Interactive Math Area */
+    .math-screen {
+        min-height: 180px; background: #fff; border-radius: 35px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 4rem; border: 3px dashed #eee; margin-bottom: 25px;
+        box-shadow: inset 0 5px 15px rgba(0,0,0,0.02);
+    }
+    .math-btn {
+        border-radius: 15px; padding: 15px; font-weight: 800; transition: 0.3s;
+        border: none; color: white; flex: 1;
+    }
 
-        .navbar.scrolled {
-            height: 70px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
+    /* Parents Note */
+    .note-box {
+        background: #fff8ef; border-radius: 25px; padding: 30px;
+        border-left: 8px solid var(--orange); margin-top: 40px;
+    }
 
-        .navbar-brand h3 {
-            color: var(--kaagapay-orange);
-            font-weight: 900;
-            margin: 0;
-        }
+    footer { background: var(--dark-footer); color: #cbd5e0; padding: 80px 0 30px; border-radius: 80px 80px 0 0; }
+</style>
+{% endblock %}
 
-        .nav-link { 
-            color: #333 !important; 
-            font-weight: 800; 
-            font-size: 14px; 
-            text-transform: uppercase; 
-        }
-
-        .btn-login-header {
-            background-color: #f0f4e8 !important; 
-            color: #000 !important;
-            font-weight: 800; 
-            border-radius: 8px; 
-            padding: 8px 24px !important;
-            text-decoration: none; 
-            transition: 0.3s;
-        }
-
-        /* --- HERO SECTION --- */
-        .hero-section { 
-            position: relative; 
-            width: 100%; 
-            height: 110vh; 
-            min-height: 600px;
-            display: flex; 
-            align-items: center; 
-            /* DITO ANG FIX PARA SA BACKGROUND IMAGE */
-            /* Siguraduhin na may file na 'rightside.png' sa static/images/ folder mo */
-            background-image: url("{% static 'images/homeback.png' %}");
-            background-size: cover; 
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        .hero-section::before {
-            content: ""; 
-            position: absolute; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 100%); 
-            z-index: 1;
-        }
-
-        .hero-content { position: relative; z-index: 2; padding: 0 8%; }
-        .hero-title { font-weight: 900; color: var(--kaagapay-orange); font-size: clamp(2.5rem, 6vw, 4.5rem); }
-        .hero-subtitle { color: var(--alpabasa-blue); font-weight: 900; font-size: clamp(1.2rem, 3vw, 2rem); }
-        
-        .btn-main {
-            background-color: var(--btn-teal); 
-            color: white; 
-            font-weight: 800;
-            padding: 15px 45px; 
-            border-radius: 50px; 
-            text-decoration: none;
-            display: inline-block; 
-            transition: 0.3s; 
-            box-shadow: 0 5px 15px rgba(77,182,172,0.4);
-        }
-
-        /* --- SECTIONS --- */
-        section { padding: 100px 0; }
-        .section-title { color: var(--kaagapay-orange); font-weight: 900; font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 20px; }
-
-        .bakit-section { background-color: #ffffff; }
-        .teacher-img { max-width: 100%; filter: drop-shadow(5px 10px 15px rgba(0,0,0,0.1)); }
-
-        /* --- ABOUT PREVIEW SECTION --- */
-        .about-preview-section { 
-            background-color: var(--light-bg); 
-            border-top: 1px solid #e0e6ed;
-            border-bottom: 1px solid #e0e6ed;
-        }
-
-        .about-img-container img {
-            max-width: 90%;
-            height: auto;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); 
-        }
-
-        .btn-outline-kaagapay {
-            border: 2px solid var(--kaagapay-orange);
-            color: var(--kaagapay-orange);
-            padding: 12px 35px; 
-            border-radius: 50px; 
-            font-weight: 800;
-            text-decoration: none; 
-            transition: 0.3s;
-            display: inline-block;
-        }
-        .btn-outline-kaagapay:hover {
-            background-color: var(--kaagapay-orange);
-            color: white;
-        }
-
-        @media (max-width: 991px) {
-            .hero-section { text-align: center; }
-            .section-title { text-align: center; }
-            .teacher-img { margin-bottom: 30px; }
-        }
-    </style>
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg sticky-top" id="mainNavbar">
-    <div class="container-fluid px-4"> 
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <h3>KAAGAPAY</h3>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#alpabasaNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="alpabasaNav">
-            <ul class="navbar-nav ms-auto align-items-center"> 
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#about-section">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Videos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">FAQ</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Shop</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                <li class="nav-item ms-lg-3"><a href="/login" class="btn-login-header">LOGIN</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+{% block content %}
+<div class="guide-character d-none d-md-block" id="agapay" onclick="speak('Ako si Agapay! Handa na ba kayong matuto?')">
+    <div class="speech-bubble" id="greeting">Kamusta! Sabay tayong mag-aral ng Alpabeto at Numero!</div>
+    <img src="{% static 'images/rightside.png' %}" alt="Agapay Guide" class="img-fluid">
+</div>
 
 <section class="hero-section">
-    <div class="container-fluid hero-content">
-        <div class="row align-items-center">
-            <div class="col-lg-6" data-aos="fade-right">
-                <h1 class="hero-title">Programang KAAGAPAY</h1>
-                <h2 class="hero-subtitle">Every Filipino child, a reader</h2>
-                <p class="fs-5 fw-bold text-dark mb-4">Isang hakbang tungo sa mas maliwanag na kinabukasan sa pamamagitan ng pagbasa at pag-unawa.</p>
-                <a href="#" class="btn-main">Simulan ang Pagkatuto</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="bakit-section">
     <div class="container">
+        <div class="hero-content" data-aos="fade-right">
+            <h1 class="hero-title">Programang<br>KAAGAPAY</h1>
+            <p class="fs-4 fw-bold text-primary mb-3">Gabay sa Masayang Paglalakbay ng Karunungan</p>
+            <p class="lead text-muted mb-4" style="max-width: 550px;">
+                Mula sa pagbigkas ng Alpabeto hanggang sa paglutas ng Math, narito si Agapay para tulungan ang bawat batang Pilipino.
+            </p>
+            <div class="d-flex gap-3">
+                <a href="#alphabet-section" class="btn btn-lg px-5 py-3 rounded-pill fw-bold shadow text-white" style="background: var(--orange);">MAG-ARAL NA!</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white" id="alphabet-section">
+    <div class="container py-5">
         <div class="row align-items-center">
-            <div class="col-lg-5 text-center" data-aos="zoom-in">
-                <img src="{% static 'images/rightside.png' %}" alt="Teacher Animation" class="teacher-img">
+            <div class="col-md-5" data-aos="fade-right">
+                <img src="{% static 'images/homeback.png' %}" class="feature-img" alt="Learning ABC">
             </div>
-            <div class="col-lg-7" data-aos="fade-left">
-                <h2 class="section-title">Bakit KAAGAPAY?</h2>
-                <p class="bakit-lead fs-4 fw-bold text-primary mb-3">Ang pagbasa ang susi sa bawat pangarap.</p>
-                <p class="fst-italic border-start border-4 border-warning ps-3" style="font-size: 1.2rem;">
-                    "KAAGAPAY: Sa pagbasa’y walang iwanan, sabay-sabay sa kaunlaran at paghubog para sa kahusayan!"
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="about-preview-section" id="about-section">
-    <div class="container">
-        <div class="row align-items-center flex-row-reverse">
-            <div class="col-lg-5 about-img-container text-center" data-aos="fade-left">
-                <img src="{% static 'images/about.png' %}" alt="About KAAGAPAY">
-            </div>
-            <div class="col-lg-7" data-aos="fade-right">
-                <h2 class="section-title">Tungkol sa Amin</h2>
-                <p class="fs-5 mb-4 text-secondary">
-                    Ang Programang KAAGAPAY ay binuo upang magbigay ng de-kalidad na kagamitan sa pagbasa para sa mga batang Pilipino. Layunin naming gawing masaya at madali ang proseso ng pagkatuto gamit ang teknolohiya at sining.
-                </p>
-                <a href="{% url 'about_page' %}" class="btn-outline-kaagapay">View More</a>
+            <div class="col-md-7 ps-md-5" data-aos="fade-left">
+                <h2 class="display-5 fw-bold text-primary mb-4">Ang Alpabetong Filipino</h2>
+                <div class="learning-grid">
+                    <script>
+                        const letters = [
+                            ['A','Patinig'],['B','Katinig'],['K','Katinig'],['D','Katinig'],['E','Patinig'],
+                            ['G','Katinig'],['H','Katinig'],['I','Patinig'],['L','Katinig'],['M','Katinig'],
+                            ['N','Katinig'],['NG','Katinig'],['O','Patinig'],['P','Katinig'],['R','Katinig'],
+                            ['S','Katinig'],['T','Katinig'],['U','Patinig'],['W','Katinig'],['Y','Katinig']
+                        ];
+                        letters.forEach(l => {
+                            document.write(`
+                                <div class="small-card" onclick="speak('${l[0]}')">
+                                    <div class="display-char ${l[1] === 'Patinig' ? 'text-danger' : 'text-primary'}">${l[0]}${l[0].toLowerCase()}</div>
+                                    <span class="char-label">${l[1]}</span>
+                                </div>
+                            `);
+                        });
+                    </script>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<section class="py-5" style="background: #f0f7ff;" id="math-section">
+    <div class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-6" data-aos="fade-up">
+                <h2 class="display-5 fw-bold" style="color: var(--orange);">Masayang Pagbibilang</h2>
+                <p class="text-muted mb-4">I-click ang numero para marinig ang tamang pagbilang.</p>
+                <div class="learning-grid">
+                    <script>
+                        const nums = [['1','Isa'],['2','Dalawa'],['3','Tatlo'],['4','Apat'],['5','Lima'],['6','Anim'],['7','Pito'],['8','Walo'],['9','Siyam'],['10','Sampu']];
+                        nums.forEach(n => {
+                            document.write(`
+                                <div class="small-card" onclick="speak('${n[1]}')">
+                                    <div class="display-char text-success">${n[0]}</div>
+                                    <span class="char-label">${n[1]}</span>
+                                </div>
+                            `);
+                        });
+                    </script>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="bg-white p-4 rounded-5 shadow-sm">
+                    <h3 class="fw-bold mb-4 text-center">Interactive Math Demo</h3>
+                    <div id="math-screen" class="math-screen">🍎 + 🍎 = ?</div>
+                    <div class="d-grid gap-3">
+                        <div class="d-flex gap-2">
+                            <button onclick="runMath('add')" class="math-btn bg-primary">Pagdaragdag (+)</button>
+                            <button onclick="runMath('sub')" class="math-btn bg-danger">Pagbabawas (-)</button>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button onclick="runMath('mul')" class="math-btn bg-success">Pagpaparami (x)</button>
+                            <button onclick="runMath('div')" class="math-btn bg-info">Pagpapahati (/)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-box" data-aos="zoom-in">
+            <h4 class="fw-bold text-dark"><i class="bi bi- megaphone-fill me-2"></i> Mensahe para sa mga Magulang</h4>
+            <p class="mb-0">Ang pag-aaral ay mas nagiging epektibo kung ang mga bata ay ginagabayan. Hikayatin ang inyong anak na ulit-ulitin ang mga tunog ng letra at subukan ang mga simpleng math problems sa itaas upang mahasa ang kanilang isipan.</p>
+        </div>
+    </div>
+</section>
+
+<section id="curriculum" class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Gabay sa Bawat Linggo</h2>
+            <p class="text-muted">Ang iyong progreso mula Linggo 1 hanggang Linggo 7</p>
+        </div>
+        <div class="row g-4">
+            {% for i in "1234567" %}
+            <div class="col-lg-3 col-md-4 col-sm-6" data-aos="zoom-in">
+                <div class="curriculum-card shadow-sm p-4 text-center" style="border-radius: 30px; border: 2px solid #f8f9fa;">
+                    <span class="badge bg-primary mb-3">LINGGO {{ i }}</span>
+                    <h5 class="fw-bold">Aralin {{ i }}</h5>
+                    <p class="small text-muted">Mga paksa at pagsasanay para sa linggong ito.</p>
+                    <a href="{% url 'aralin' %}" class="btn btn-sm btn-outline-primary rounded-pill px-4">Tignan ang Aralin</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container text-center">
+        <h3 class="display-6 fw-bold mb-3">KAAGAPAY</h3>
+        <p class="opacity-75">Ang iyong katuwang sa masayang kinabukasan ng bawat batang Pilipino.</p>
+        <div class="d-flex justify-content-center gap-4 my-4">
+            <a href="#" class="text-white fs-4"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-white fs-4"><i class="bi bi-youtube"></i></a>
+            <a href="#" class="text-white fs-4"><i class="bi bi-tiktok"></i></a>
+        </div>
+        <hr class="border-secondary opacity-25">
+        <p class="small mb-0">© 2026 Programang Kaagapay. Lahat ng karapatan ay reserbado.</p>
+    </div>
+</footer>
+
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
     AOS.init({ duration: 1000, once: true });
 
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            const navbarHeight = document.getElementById('mainNavbar').offsetHeight;
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = text;
+        msg.lang = 'tl-PH'; 
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+    }
 
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - navbarHeight,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
+    function runMath(op) {
+        const screen = document.getElementById('math-screen');
+        if(op === 'add') {
+            screen.innerHTML = "🍎 + 🍎 = 🍎🍎";
+            speak("Ang isa plus isa ay dalawa");
+        } else if(op === 'sub') {
+            screen.innerHTML = "🍎🍎 - 🍎 = 🍎";
+            speak("Ang dalawa bawasan ng isa ay isa");
+        } else if(op === 'mul') {
+            screen.innerHTML = "🍎🍎 x 2 = 🍎🍎🍎🍎";
+            speak("Ang dalawang mansanas na pinarami ng dalawa ay apat");
+        } else if(op === 'div') {
+            screen.innerHTML = "🍎🍎 / 2 = 🍎";
+            speak("Ang dalawang mansanas na hinati sa dalawa ay isa");
+        }
+    }
 
-    window.addEventListener('scroll', function() {
-        const nav = document.getElementById('mainNavbar');
-        if (window.scrollY > 50) nav.classList.add('scrolled');
-        else nav.classList.remove('scrolled');
-    });
+    setTimeout(() => {
+        const bubble = document.getElementById('greeting');
+        if(bubble) bubble.style.display = 'block';
+    }, 2000);
 </script>
-</body>
-</html>
+{% endblock %}

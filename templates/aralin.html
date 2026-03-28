@@ -1,0 +1,512 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --blue: #2d6fb4;
+        --orange: #f47920;
+        --teal: #20c997;
+        --light-bg: #f8faff;
+    }
+
+    .aralin-header {
+        background: linear-gradient(135deg, var(--blue) 0%, #2a5298 100%);
+        color: white;
+        padding: 60px 0;
+        border-radius: 0 0 50px 50px;
+        margin-bottom: 30px;
+    }
+
+    .instruction-card {
+        background: #fff3e0;
+        border-left: 5px solid var(--orange);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .instruction-icon { font-size: 2.5rem; color: var(--orange); }
+
+    .nav-pills .nav-link {
+        color: var(--blue);
+        font-weight: 700;
+        border-radius: 20px;
+        padding: 10px 25px;
+        margin: 5px;
+        background: #f0f2f5;
+        transition: 0.3s;
+    }
+    .nav-pills .nav-link.active {
+        background-color: var(--orange) !important;
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(244, 121, 32, 0.3);
+    }
+
+    .alphabet-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .letter-card-mini {
+        background: white;
+        border-radius: 25px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 2px solid #eee;
+        text-align: center;
+        transition: 0.3s;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .letter-card-mini:hover {
+        transform: translateY(-5px);
+        border-color: var(--teal);
+    }
+
+    .char-box {
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--blue);
+        background: var(--light-bg);
+        border-radius: 20px;
+        margin-bottom: 12px;
+        padding: 10px;
+        line-height: 1.2;
+    }
+
+    .word-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    .btn-word-speaker {
+        background: white;
+        border: 1.5px solid #ddd;
+        border-radius: 10px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .btn-word-speaker:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+    }
+
+    .category-tag {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        color: white;
+        display: inline-block;
+    }
+    .bg-patinig { background-color: var(--teal); }
+    .bg-katinig { background-color: var(--blue); }
+    .bg-special { background-color: var(--orange); }
+
+    .btn-study {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        background: #e9ecef;
+        color: var(--blue);
+        margin-top: auto;
+    }
+    .btn-study:hover { background: var(--blue); color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="aralin-header text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Pagsasanay sa Pagbasa</h1>
+        <p class="lead">Pindutin ang mga salita at makinig para matutong bumasa!</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="instruction-card">
+        <div class="instruction-icon">
+            <i class="fas fa-play-circle"></i>
+        </div>
+        <div>
+            <h5 class="fw-bold mb-1">Paano mag-aral?</h5>
+            <p class="mb-0 text-muted">Naalala mo ba ang napanood mong video? Aralin nating muli ang mga ito! I-click ang bawat salita para marinig ang tamang bigkas at mag-practice magbasa sa pamamagitan ng mga ito.</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills justify-content-center mb-5" id="pills-tab" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#week1">Linggo 1</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week2">Linggo 2</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week3">Linggo 3</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week4">Linggo 4</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week5">Linggo 5</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week6">Linggo 6</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#week7">Linggo 7</button></li>
+    </ul>
+
+    <div class="tab-content">
+        
+        <div class="tab-pane fade show active" id="week1">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">M m</div>
+                    <h5 class="fw-bold">Aralin 1</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Mata')">Mata</button>
+                        <button class="btn-word-speaker" onclick="speak('Mama')">Mama</button>
+                        <button class="btn-word-speaker" onclick="speak('Manok')">Manok</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">S s</div>
+                    <h5 class="fw-bold">Aralin 2</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Saging')">Saging</button>
+                        <button class="btn-word-speaker" onclick="speak('Sapatos')">Sapatos</button>
+                        <button class="btn-word-speaker" onclick="speak('Susi')">Susi</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-patinig">Patinig</span>
+                    <div class="char-box">A a</div>
+                    <h5 class="fw-bold">Aralin 3</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Araw')">Araw</button>
+                        <button class="btn-word-speaker" onclick="speak('Aso')">Aso</button>
+                        <button class="btn-word-speaker" onclick="speak('Atis')">Atis</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week2">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-patinig">Patinig</span>
+                    <div class="char-box">I i</div>
+                    <h5 class="fw-bold">Aralin 4</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Ibon')">Ibon</button>
+                        <button class="btn-word-speaker" onclick="speak('Isda')">Isda</button>
+                        <button class="btn-word-speaker" onclick="speak('Itlog')">Itlog</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-patinig">Patinig</span>
+                    <div class="char-box">O o</div>
+                    <h5 class="fw-bold">Aralin 5</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Okra')">Okra</button>
+                        <button class="btn-word-speaker" onclick="speak('Orasan')">Orasan</button>
+                        <button class="btn-word-speaker" onclick="speak('Oros')">Oros</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">B b</div>
+                    <h5 class="fw-bold">Aralin 6</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Bata')">Bata</button>
+                        <button class="btn-word-speaker" onclick="speak('Bola')">Bola</button>
+                        <button class="btn-word-speaker" onclick="speak('Bahay')">Bahay</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week3">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-patinig">Patinig</span>
+                    <div class="char-box">E e</div>
+                    <h5 class="fw-bold">Aralin 7</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Eroplano')">Eroplano</button>
+                        <button class="btn-word-speaker" onclick="speak('Elepante')">Elepante</button>
+                        <button class="btn-word-speaker" onclick="speak('Eskwela')">Eskwela</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-patinig">Patinig</span>
+                    <div class="char-box">U u</div>
+                    <h5 class="fw-bold">Aralin 8</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Ulan')">Ulan</button>
+                        <button class="btn-word-speaker" onclick="speak('Ubas')">Ubas</button>
+                        <button class="btn-word-speaker" onclick="speak('Unggoy')">Unggoy</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week4">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">P p</div>
+                    <h5 class="fw-bold">Aralin 9</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Pusa')">Pusa</button>
+                        <button class="btn-word-speaker" onclick="speak('Puno')">Puno</button>
+                        <button class="btn-word-speaker" onclick="speak('Pisara')">Pisara</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">R r</div>
+                    <h5 class="fw-bold">Aralin 10</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Radyo')">Radyo</button>
+                        <button class="btn-word-speaker" onclick="speak('Relo')">Relo</button>
+                        <button class="btn-word-speaker" onclick="speak('Rosa')">Rosa</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">D d</div>
+                    <h5 class="fw-bold">Aralin 11</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Daga')">Daga</button>
+                        <button class="btn-word-speaker" onclick="speak('Dahon')">Dahon</button>
+                        <button class="btn-word-speaker" onclick="speak('Damit')">Damit</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">H h</div>
+                    <h5 class="fw-bold">Aralin 12</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Halaman')">Halaman</button>
+                        <button class="btn-word-speaker" onclick="speak('Handa')">Handa</button>
+                        <button class="btn-word-speaker" onclick="speak('Hari')">Hari</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">W w</div>
+                    <h5 class="fw-bold">Aralin 13</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Watawat')">Watawat</button>
+                        <button class="btn-word-speaker" onclick="speak('Walis')">Walis</button>
+                        <button class="btn-word-speaker" onclick="speak('Walo')">Walo</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week5">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">T t</div>
+                    <h5 class="fw-bold">Aralin 14</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Tasa')">Tasa</button>
+                        <button class="btn-word-speaker" onclick="speak('Tao')">Tao</button>
+                        <button class="btn-word-speaker" onclick="speak('Tatlo')">Tatlo</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">N n</div>
+                    <h5 class="fw-bold">Aralin 15</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Nanay')">Nanay</button>
+                        <button class="btn-word-speaker" onclick="speak('Niyog')">Niyog</button>
+                        <button class="btn-word-speaker" onclick="speak('Narra')">Narra</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">K k</div>
+                    <h5 class="fw-bold">Aralin 16</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Kama')">Kama</button>
+                        <button class="btn-word-speaker" onclick="speak('Kuko')">Kuko</button>
+                        <button class="btn-word-speaker" onclick="speak('Kalabasa')">Kalabasa</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">L l</div>
+                    <h5 class="fw-bold">Aralin 17</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Lapis')">Lapis</button>
+                        <button class="btn-word-speaker" onclick="speak('Lamesa')">Lamesa</button>
+                        <button class="btn-word-speaker" onclick="speak('Lola')">Lola</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">Y y</div>
+                    <h5 class="fw-bold">Aralin 18</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Yoyo')">Yoyo</button>
+                        <button class="btn-word-speaker" onclick="speak('Yelo')">Yelo</button>
+                        <button class="btn-word-speaker" onclick="speak('Yaman')">Yaman</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week6">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-katinig">Katinig</span>
+                    <div class="char-box">G g</div>
+                    <h5 class="fw-bold">Aralin 19</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Gatas')">Gatas</button>
+                        <button class="btn-word-speaker" onclick="speak('Gunting')">Gunting</button>
+                        <button class="btn-word-speaker" onclick="speak('Guro')">Guro</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Special</span>
+                    <div class="char-box">ñ</div>
+                    <h5 class="fw-bold">Aralin 20</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Niño')">Niño</button>
+                        <button class="btn-word-speaker" onclick="speak('Piña')">Piña</button>
+                        <button class="btn-word-speaker" onclick="speak('Cariñosa')">Cariñosa</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Special</span>
+                    <div class="char-box">Ng</div>
+                    <h5 class="fw-bold">Aralin 21</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Ngipin')">Ngipin</button>
+                        <button class="btn-word-speaker" onclick="speak('Ngayon')">Ngayon</button>
+                        <button class="btn-word-speaker" onclick="speak('Nguso')">Nguso</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="week7">
+            <div class="alphabet-grid">
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">F f</div>
+                    <h5 class="fw-bold">Aralin 22</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Folder')">Folder</button>
+                        <button class="btn-word-speaker" onclick="speak('Filipino')">Filipino</button>
+                        <button class="btn-word-speaker" onclick="speak('Fans')">Fans</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">J j</div>
+                    <h5 class="fw-bold">Aralin 23</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Jaket')">Jaket</button>
+                        <button class="btn-word-speaker" onclick="speak('Jeep')">Jeep</button>
+                        <button class="btn-word-speaker" onclick="speak('Jaryo')">Jaryo</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">Q q</div>
+                    <h5 class="fw-bold">Aralin 24</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Queen')">Queen</button>
+                        <button class="btn-word-speaker" onclick="speak('Quiz')">Quiz</button>
+                        <button class="btn-word-speaker" onclick="speak('Quartz')">Quartz</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">V v</div>
+                    <h5 class="fw-bold">Aralin 25</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Vinta')">Vinta</button>
+                        <button class="btn-word-speaker" onclick="speak('Vases')">Vases</button>
+                        <button class="btn-word-speaker" onclick="speak('Violin')">Violin</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">X x</div>
+                    <h5 class="fw-bold">Aralin 26</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Xylophone')">Xylophone</button>
+                        <button class="btn-word-speaker" onclick="speak('X-ray')">X-ray</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+                <div class="letter-card-mini">
+                    <span class="category-tag bg-special">Moderno</span>
+                    <div class="char-box">Z z</div>
+                    <h5 class="fw-bold">Aralin 27</h5>
+                    <div class="word-list">
+                        <button class="btn-word-speaker" onclick="speak('Zebra')">Zebra</button>
+                        <button class="btn-word-speaker" onclick="speak('Zero')">Zero</button>
+                        <button class="btn-word-speaker" onclick="speak('Zigzag')">Zigzag</button>
+                    </div>
+                    <a href="#" class="btn-study">Pag-aralan</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function speak(word) {
+        window.speechSynthesis.cancel();
+        let utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'tl-PH'; 
+        utterance.rate = 0.8; 
+        utterance.pitch = 1; 
+        window.speechSynthesis.speak(utterance);
+    }
+</script>
+{% endblock %}

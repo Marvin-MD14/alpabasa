@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KAAGAPAY{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root { --orange: #f47920; --blue: #2d6fb4; }
+        body { font-family: 'Nunito', sans-serif; }
+        
+        /* Navbar Styling */
+        .navbar-brand { font-weight: 900; color: var(--orange) !important; font-size: 1.8rem; }
+        .nav-link { font-weight: 700; color: #555; margin: 0 10px; }
+        .nav-link:hover { color: var(--blue); }
+        .btn-login { background-color: #f1f5f9; color: #333; font-weight: 700; border-radius: 10px; padding: 8px 25px; }
+        
+        /* Global Footer */
+        footer { background-color: #f8f9fa; padding: 40px 0; margin-top: 50px; border-top: 1px solid #eee; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">KAAGAPAY</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/about">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">VIDEOS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">SHOP</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">CONTACT</a></li>
+                    <li class="nav-item ms-lg-3"><a class="btn btn-login" href="#">LOGIN</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2026 Programang KAAGAPAY. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
