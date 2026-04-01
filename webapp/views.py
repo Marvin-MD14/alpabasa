@@ -8,3 +8,6 @@ def about(request):
 
 def aralin(request):
     return render(request, 'aralin.html')
+
+def talahayanan(request):
+    return render(request, 'talahayanan.html')

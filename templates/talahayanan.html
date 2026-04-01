@@ -1,0 +1,1306 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Talahayanan 2 - Interactive Stories & Quizzes{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root { --orange: #f47920; --blue: #2d6fb4; --light-bg: #fdf2e9; }
+    
+    .story-card { 
+        border-radius: 25px; 
+        border: none; 
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
+        padding: 40px; 
+        background: #fff; 
+        margin-bottom: 30px; 
+    }
+    
+    /* Layout para sa Paragraph at Images - Responsive */
+    .para-row { 
+        display: flex; 
+        flex-direction: column; /* Default sa mobile */
+        align-items: center; 
+        margin-bottom: 30px; 
+        gap: 25px; 
+    }
+    
+    @media (min-width: 768px) {
+        .para-row { flex-direction: row; }
+        .para-row.reverse { flex-direction: row-reverse; }
+    }
+
+    .para-image { 
+        width: 100%; 
+        max-width: 250px; 
+        height: auto; 
+        border-radius: 20px; 
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12); 
+        border: 3px solid white; 
+    }
+
+    .story-text p { 
+        font-size: 1.15rem; 
+        line-height: 1.8; 
+        text-align: justify; 
+        margin: 0; 
+        flex: 1; 
+        color: #333; 
+    }
+
+    /* Navigation Pills - Scrollable on mobile */
+    .nav-pills { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 10px; }
+    .nav-pills .nav-item { white-space: nowrap; }
+    .nav-pills .nav-link { font-weight: 700; color: var(--blue); border: 2px solid #eee; margin: 5px; border-radius: 15px; }
+    .nav-pills .nav-link.active { background-color: var(--orange) !important; color: white; border-color: var(--orange); }
+
+    /* Quiz Styling */
+    .question-section { background: var(--light-bg); padding: 30px; border-radius: 25px; margin-top: 50px; border: 2px dashed var(--orange); }
+    .quiz-item { background: white; padding: 20px; border-radius: 18px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .feedback { font-weight: bold; padding: 12px; border-radius: 10px; margin-top: 15px; display: none; }
+    .feedback.correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .feedback.wrong { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    
+    .btn-submit { background-color: var(--blue); color: white; border: none; font-weight: 900; border-radius: 50px; padding: 15px; width: 100%; transition: 0.3s; }
+    .btn-submit:hover { background-color: #1a4a7a; transform: scale(1.02); }
+
+    .audio-player-container { background: #f0f4f8; padding: 15px; border-radius: 50px; border: 2px solid var(--blue); margin-bottom: 40px; }
+    /* Carousel Styling */
+.carousel-item img {
+    border-radius: 15px; /* Para round ang kanto katulad ng story-card */
+    max-height: 500px;  /* I-adjust mo depende sa gusto mong laki */
+    object-fit: contain; /* Para hindi ma-stretch ang image */
+    background-color: #f8f9fa;
+}
+
+.carousel-control-prev-icon, 
+.carousel-control-next-icon {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Para sa indicators sa ilalim */
+.carousel-indicators [data-bs-target] {
+    background-color: var(--blue);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container my-5">
+   <div class="container-fluid px-0 my-2">
+    <div class="story-card shadow-lg border-0 overflow-hidden" style="border-radius: 15px; background: #fdfdfd;">
+        
+        <div class="p-3 text-white text-center shadow-sm" style="background: linear-gradient(45deg, #007bff, #00c6ff);">
+            <h2 class="m-0" style="font-weight: 900; letter-spacing: 1px; text-transform: uppercase; font-size: 1.5rem;">
+                📖 Talahanayan 1: Aralin 1-3
+            </h2>
+        </div>
+
+        <div id="aralinCarousel" class="carousel slide" data-bs-interval="false" style="background: #fff; position: relative; z-index: 1;">
+            
+            <div class="carousel-inner" id="talahanayan1Container">
+                </div>
+
+            <button class="carousel-control-prev custom-nav" type="button" data-bs-target="#aralinCarousel" data-bs-slide="prev">
+                <div class="nav-circle">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </div>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            
+            <button class="carousel-control-next custom-nav" type="button" data-bs-target="#aralinCarousel" data-bs-slide="next">
+                <div class="nav-circle">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </div>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <div class="p-3 border-top d-flex justify-content-between align-items-center bg-light">
+            <div class="text-muted d-none d-md-block">
+                <small><i class="fas fa-hand-pointer me-1"></i> I-click ang arrow para maglipat.</small>
+            </div>
+            
+            <div class="mx-auto">
+                <span id="pageIndicator" class="badge rounded-pill bg-primary px-4 py-2 shadow-sm" style="font-size: 1.1rem; min-width: 120px;">
+                    Pahina: 1 / 54
+                </span>
+            </div>
+
+            <div class="text-muted d-none d-md-block">
+                <small>Aralin 1-3 <i class="fas fa-book-open ms-1"></i></small>
+            </div>
+        </div>
+    </div>
+
+<hr class="my-5" style="border-top: 5px dotted var(--blue); opacity: 0.2;">
+
+<div class="container my-5">
+    <h1 class="text-center mb-5" style="color: var(--blue); font-weight: 900; text-transform: uppercase;">
+        📖 Talahanayan 2: Mga Kwentong Interactive
+    </h1>
+
+    <ul class="nav nav-pills justify-content-start justify-content-md-center mb-5" id="pills-tab" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#story1">Ang Sikreto ni Lola Ima</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#story2">Ang Katapatan sa Kapwa</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#story3">Ang Bayanihan ng mga Magkakaibigan</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#story4">Ang Aral sa Tindahan</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#story5">Ang Agham sa Likod ng Ating Mundo</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#story6">Sa Landas ng Solar System</button></li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="story1">
+            <div class="story-card">
+                <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Ang Sikreto ni Lola Ima”</h2>
+                
+                <div class="audio-player-container text-center mb-5">
+                    <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+                    <audio controls class="w-100 w-md-75">
+                        <source src="{% static 'images/audio/Lolaima.mp3' %}" type="audio/mpeg">
+                    </audio>
+                </div>
+          
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Si Rezel ay labing-apat na taong gulang at nakatira kasama ang kaniyang lola, si Lola Ima, matapos ang pagkawala ng kaniyang mga magulang. Bagaman malapit sila, madalas nagkakaroon sila ng hindi pagkakaunawaan. Minsan, habang nag-aaral si Rezel sa kaniyang silid, nakarinig siya ng malakas na boses ni Lola Ima mula sa kusina. Si Rezel ay naiinis at muntik nang sumigaw. Ngunit huminga siya nang malalim at naisip na baka may pinagdadaanan ang kaniyang lola.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Lumapit siya sa kusina at nakita na si Lola Ima ay nag-aayos ng lumang larawan at tila malungkot. Tahimik siyang umupo sa tabi ng lola at nagtanong, “Lola, bakit po kayo malungkot?” Ngumiti si Lola Ima at hinawakan ang kamay ni Rezel. “Alam mo, Rezel,” sabi niya, “minahal ng lola mo ang pamilya natin nang buong puso. Minsan, natatandaan ko lang ang mga araw na kasama ko ang iyong mga magulang at naiiyak ako sa alaala.”</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Doon napagtanto ni Rezel na ang emosyon ng kaniyang lola ay mahalaga at karapat-dapat igalang. Hindi niya hinayaan ang kaniyang sariling inis na mangibabaw. Sa halip, nakinig siya, nagpakita ng malasakit, at niyakap si Lola Ima. Sa simpleng gawaing iyon, natutuhan niya ang halaga ng paggalang sa damdamin ng iba, lalo na sa nakatatanda.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Sa mga sumunod na araw, mas naging maingat si Rezel sa kaniyang pananalita at kilos. Kapag naramdaman niyang may sama ng loob o lungkot si Lola Ima, naglalaan siya ng oras para makinig, magtanong, at magbigay ng aliw. Sa ganitong paraan, lumalim ang kanilang relasyon at mas naramdaman ni Rezel ang kahalagahan ng pagpapahalaga sa emosyon ng ibang tao.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT: Ang Sikreto ni Lola Ima</h3>
+            <form id="quizForm1">
+                
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Sino ang mga pangunahing tauhan sa kuwento?</b></p>
+                    <input type="radio" name="q1" value="correct"> A. Rezel at si Lola Ima (Mag-lola)<br>
+                    <input type="radio" name="q1" value="wrong" data-feedback="Ayon sa unang paragraph, ang kwento ay tungkol kay Rezel at ang kaniyang lola na si Lola Ima."> B. Rezel at ang kaniyang Guro<br>
+                    <div id="msg1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Ano ang naramdaman ni Rezel nang marinig ang boses ni Lola Ima?</b></p>
+                    <input type="radio" name="q2" value="wrong" data-feedback="Sinasabi sa paragraph 1 na si Rezel ay naiinis at muntik nang sumigaw, ngunit pinili niyang huminga nang malalim."> A. Natakot at nagtago<br>
+                    <input type="radio" name="q2" value="correct"> B. Naiinis ngunit nagtimpi<br>
+                    <div id="msg2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Bakit malungkot si Lola Ima?</b></p>
+                    <input type="radio" name="q3" value="correct"> A. Naalala ang mga magulang ni Rezel<br>
+                    <input type="radio" name="q3" value="wrong" data-feedback="Balikan ang paragraph 2: Sabi ni Lola Ima, naiiyak siya sa alaala ng mga magulang ni Rezel habang hawak ang lumang larawan."> B. Nawawala ang kaniyang pera<br>
+                    <div id="msg3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Ano ang ginawa ni Rezel para sa lola?</b></p>
+                    <input type="radio" name="q4" value="correct"> A. Tumabi at niyakap ang lola<br>
+                    <input type="radio" name="q4" value="wrong" data-feedback="Sa paragraph 3, nakasaad na si Rezel ay nakinig, nagpakita ng malasakit, at niyakap si Lola Ima."> B. Umalis at naglaro sa labas<br>
+                    <div id="msg4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Paano ipinakita ni Rezel ang malasakit sa damdamin ng lola?</b></p>
+                    <textarea class="form-control" id="q5_essay" rows="2"></textarea>
+                    <div id="msg5" class="feedback"></div>
+                </div>
+                
+                <div class="quiz-item">
+                    <p><b>6. Ano ang natutunan ni Rezel sa emosyon ng iba?</b></p>
+                    <textarea class="form-control" id="q6_essay" rows="2"></textarea>
+                    <div id="msg6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Bakit mahalaga makinig sa nakatatanda?</b></p>
+                    <textarea class="form-control" id="q7_essay" rows="2"></textarea>
+                    <div id="msg7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Karanasan mo sa pagtulong sa malungkot na kaibigan?</b></p>
+                    <textarea class="form-control" id="q8_essay" rows="2"></textarea>
+                    <div id="msg8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Paano magpakita ng respeto sa paaralan?</b></p>
+                    <textarea class="form-control" id="q9_essay" rows="2"></textarea>
+                    <div id="msg9" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">III. Pagninilay at Aral</h5>
+                
+                <div class="quiz-item">
+                    <p><b>10. Aral tungkol sa pakikipag-ugnayan sa pamilya?</b></p>
+                    <textarea class="form-control" id="q10_essay" rows="2"></textarea>
+                    <div id="msg10" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>11. Paano nakakatulong ang pagiging maunawain?</b></p>
+                    <textarea class="form-control" id="q11_essay" rows="2"></textarea>
+                    <div id="msg11" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStoryQuiz('quizForm1')" class="btn-submit mt-4">
+                    I-SUBMIT LAHAT NG SAGOT
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+   <div class="tab-pane fade" id="story2">
+    <div class="story-card">
+        <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Ang Katapatan sa Kapwa”</h2>
+        
+        <div class="audio-player-container text-center mb-5">
+            <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+            <audio controls class="w-100 w-md-75">
+                <source src="{% static 'images/audio/reydo.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Si Reydo ay isang labing-pitong taong gulang na mag-aaral sa mataas na paaralan sa Tarlac. Mahilig siyang makipaglaro at minsan ay nahihirapang tapusin ang kaniyang mga gawain sa oras. Si Melody naman ay kaklase niya na kilala sa pagiging masipag, matalino, at palaging handang tumulong sa kapwa. Magkaibigan sila ngunit magkaiba ang kanilang ugali—si Reydo ay madalas na nagkakasala sa pamamagitan ng pagsisinungaling, habang si Melody ay tapat at maasahan.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Isang araw, nagtakda ang kanilang guro ng proyekto sa agham na dapat ipasa sa loob ng linggo. Si Reydo, na sabik makipaglaro sa kaniyang mga kaibigan, ay hindi ginawa ang proyekto at sinabi kay Melody na nakalimutan niya ito. Si Melody, na palaging tapat, ay nag-alok ng tulong kay Reydo para matapos ang proyekto bago matapos sa itinakdang oras. Sa una, tumanggi si Reydo at sinubukang magsinungaling sa guro, pero nang makita niya ang pagkabalisa at pagkabahala sa mukha ni Melody dahil sa pangakong tutulungan siya, nakaramdam siya ng sisi at kaunting takot.</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Lumipas ang dalawang araw, at napansin ni Reydo na si Melody ay patuloy na nagtatrabaho ng husto para sa proyekto nila. Nakaramdam siya ng galit sa sarili at kaunting panghihinayang dahil alam niyang hindi siya tapat. Sa gabing iyon, nag-isip siya nang mabuti at naisip na mas makabubuti kung maging tapat at humingi ng tulong, kaysa patuloy na magsinungaling at masaktan ang damdamin ni Melody.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Kinabukasan, lumapit si Reydo kay Melody at sinabi, “Pasensya na, Melody. Hindi ko talaga ginawa ang proyekto at alam kong nag-abala ka na para sa akin. Puwede mo ba akong tulungan simula ngayon?” Ngumiti si Melody at sagot, “Siyempre, Reydo. Mas maganda kung nagtutulungan tayo at natututo rin tayo sa isa’t isa.”</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Sa tulong ni Melody, natapos nila ang proyekto at ipinakita ito sa guro. Nang makita ng guro ang kanilang resulta, hinangaan niya sila at pinuri ang kanilang sama-samang pagsisikap. Ngunit higit sa lahat, natutunan ni Reydo ang kahalagahan ng katapatan, pagtanggap sa pagkakamali, at pagpapahalaga sa damdamin ng kapwa. Napagtanto niya na ang pagsisinungaling ay nakakasakit sa damdamin ng tao.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT: Ang Katapatan sa Kapwa</h3>
+            <form id="quizForm2">
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Sino ang mga pangunahing tauhan sa kuwento at ano ang kanilang relasyon?</b></p>
+                    <input type="radio" name="q2_1" value="correct"> A. Reydo at Melody (Magkaibigan/Kaklase)<br>
+                    <input type="radio" name="q2_1" value="wrong" data-feedback="Mali. Ayon sa unang talata, si Reydo at Melody ay magkaklase sa isang mataas na paaralan sa Tarlac."> B. Reydo at ang kaniyang Guro (Mag-guro)<br>
+                    <div id="msg2_1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Bakit nahirapan si Reydo na tapusin ang proyekto sa oras?</b></p>
+                    <input type="radio" name="q2_2" value="correct"> A. Dahil mas inuna niya ang makipaglaro sa mga kaibigan<br>
+                    <input type="radio" name="q2_2" value="wrong" data-feedback="Mali. Sinasabi sa talata 2 na si Reydo ay sabik makipaglaro sa mga kaibigan kaya hindi niya agad ginawa ang proyekto."> B. Dahil masyadong mahirap ang science project<br>
+                    <div id="msg2_2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Ano ang ginawa ni Melody nang malaman niyang hindi pa natatapos ni Reydo ang proyekto?</b></p>
+                    <input type="radio" name="q2_3" value="wrong" data-feedback="Mali. Balikan ang talata 2: Si Melody ay nag-alok agad ng tulong kay Reydo para matapos ang proyekto sa oras."> A. Sinisi niya si Reydo sa katamaran nito<br>
+                    <input type="radio" name="q2_3" value="correct"> B. Nag-alok siya ng tulong upang matapos ito sa oras<br>
+                    <div id="msg2_3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Paano nagbago ang ugali ni Reydo sa pagtatapos ng kuwento?</b></p>
+                    <input type="radio" name="q2_4" value="correct"> A. Naging matapat, maingat sa kilos, at marunong tumanggap ng mali<br>
+                    <input type="radio" name="q2_4" value="wrong" data-feedback="Mali. Sa huling bahagi ng kwento, nakasaad na natutunan ni Reydo ang halaga ng katapatan at paggalang sa emosyon ng iba."> B. Naging mas magaling na siya sa paggawa ng proyekto sa agham<br>
+                    <div id="msg2_4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Paano ipinakita ni Melody ang katapatan at malasakit sa kapwa?</b></p>
+                    <textarea class="form-control" id="q2_5_essay" rows="2" placeholder="Isulat ang iyong sagot dito..."></textarea>
+                    <div id="msg2_5" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>6. Ano ang damdamin ni Reydo nang makita ang pagkabalisa ni Melody? Bakit niya naramdaman iyon?</b></p>
+                    <textarea class="form-control" id="q2_6_essay" rows="2" placeholder="Isulat ang iyong sagot dito..."></textarea>
+                    <div id="msg2_6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Bakit mahalaga ang pagiging tapat sa kapwa? Paano ito nakakaapekto sa tiwala?</b></p>
+                    <textarea class="form-control" id="q2_7_essay" rows="2" placeholder="Isulat ang iyong sagot dito..."></textarea>
+                    <div id="msg2_7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Naranasan mo na bang magsinungaling o tumanggap ng pagkakamali? Paano mo ito hinarap?</b></p>
+                    <textarea class="form-control" id="q2_8_essay" rows="2" placeholder="Isulat ang iyong sagot dito..."></textarea>
+                    <div id="msg2_8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Ano ang maaari mong gawin upang ipakita ang katapatan sa iyong pamilya at guro?</b></p>
+                    <textarea class="form-control" id="q2_9_essay" rows="2" placeholder="Isulat ang iyong sagot dito..."></textarea>
+                    <div id="msg2_9" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStory2()" class="btn-submit mt-4">I-SUBMIT LAHAT NG SAGOT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateStory2() {
+            const form = document.getElementById('quizForm2');
+            let isAllCorrect = true;
+            let mcScore = 0;
+            let essayCount = 0;
+
+            // 1. Validate Multiple Choice (q2_1 to q2_4)
+            for (let i = 1; i <= 4; i++) {
+                const groupName = `q2_${i}`;
+                const msgId = `msg2_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const selected = form.querySelector(`input[name="${groupName}"]:checked`);
+
+                if (selected) {
+                    if (selected.value === "correct") {
+                        feedbackDiv.innerHTML = "✅ Tama! Napakahusay ng iyong pagsusuri.";
+                        feedbackDiv.className = "feedback correct d-block";
+                        mcScore++;
+                    } else {
+                        const hint = selected.getAttribute('data-feedback');
+                        feedbackDiv.innerHTML = `❌ ${hint}`;
+                        feedbackDiv.className = "feedback wrong d-block";
+                        isAllCorrect = false;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Mangyaring pumili ng sagot.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // 2. Validate Essays (q2_5 to q2_9)
+            for (let i = 5; i <= 9; i++) {
+                const essayId = `q2_${i}_essay`;
+                const msgId = `msg2_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const essayVal = document.getElementById(essayId).value.trim();
+
+                if (essayVal.length >= 10) {
+                    feedbackDiv.innerHTML = "💖 Salamat! Ang iyong paliwanag ay mahalaga.";
+                    feedbackDiv.className = "feedback correct d-block";
+                    essayCount++;
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Paalala: Pakihabaan ang iyong sagot base sa natutunan sa kwento.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // Final Result Alert
+            if (isAllCorrect && mcScore === 4 && essayCount === 5) {
+                alert("🎉 Napakahusay! Kumpleto at tama ang lahat ng iyong sagot para sa kwento ni Reydo.");
+            } else {
+                alert("Suriin ang mga feedback sa ibaba para sa iyong mga sagot.");
+            }
+        }
+    </script>
+</div>
+        <div class="tab-pane fade" id="story3">
+    <div class="story-card">
+        <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Ang Bayanihan ng mga Magkakaibigan”</h2>
+        
+        <div class="audio-player-container text-center mb-5">
+            <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+            <audio controls class="w-100 w-md-75">
+                <source src="{% static 'images/audio/bayanihan.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Isang mainit na umaga sa bayan ng San Rafael sa Tarlac City, naglalakad si Alvin patungo sa paaralan upang magturo ng matematika. Kasama niya ang kaniyang kaibigang si Hazel, isang guro rin, at si James, isang bagong volunteer sa barangay na nais matutong maging gabay sa mga tao.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Napansin nila ang isang matanda sa harap ng palengke na mukhang nalilito dahil hindi mahanap ang daan patungo sa ospital. Agad na lumapit si Alvin at tinanong kung kailangan nito ng tulong. Nagmungkahi si Hazel na samahan na ang matanda hanggang sa ospital upang masiguro ang kaligtasan nito.</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Habang naglalakad, may nakita rin silang bata na nahulog ang bag sa kalsada at umiiyak. Agad nila itong tinulungan at ibinalik ang bag sa magulang ng bata. Naramdaman nina Alvin, Hazel, at James ang kagalakan sa pagtulong sa kapwa nang walang hinihintay na kapalit.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Pagdating sa ospital, nagpasalamat ang matanda nang may luha sa mga mata dahil pinagaan nila ang kaniyang pag-aalala. Natutuhan ng magkakaibigan na ang simpleng paggabay at pagpapakita ng malasakit ay isang mahalagang bahagi ng kulturang Pilipino—ang bayanihan.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT: Ang Bayanihan ng mga Magkakaibigan</h3>
+            <form id="quizForm3">
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Sino-sino ang mga pangunahing tauhan na nagpakita ng bayanihan?</b></p>
+                    <input type="radio" name="q3_1" value="correct"> A. Alvin, Hazel, at James<br>
+                    <input type="radio" name="q3_1" value="wrong" data-feedback="Mali. Ayon sa unang talata, ang magkakaibigan ay sina Alvin (guro), Hazel (guro), at James (volunteer)."> B. Alvin at ang mga Pulis<br>
+                    <div id="msg3_1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Ano ang problema ng matanda na nakita nila sa palengke?</b></p>
+                    <input type="radio" name="q3_2" value="wrong" data-feedback="Mali. Sa talata 2, sinasabing nalilito ang matanda dahil hindi niya mahanap ang tamang daan patungo sa ospital."> A. Nawawala ang kaniyang pera<br>
+                    <input type="radio" name="q3_2" value="correct"> B. Hindi niya mahanap ang daan patungo sa ospital<br>
+                    <div id="msg3_2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Anong pangyayari ang naganap habang papunta sila sa ospital?</b></p>
+                    <input type="radio" name="q3_3" value="correct"> A. May batang nahulog ang bag at tinulungan nila ito<br>
+                    <input type="radio" name="q3_3" value="wrong" data-feedback="Mali. Sinasabi sa talata 3 na nakakita sila ng batang nahulog ang bag at umiiyak kaya agad nila itong tinulungan."> B. Umulan nang malakas at sila ay sumilong<br>
+                    <div id="msg3_3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Paano ipinakita ng grupo ang pagtutulungan o bayanihan?</b></p>
+                    <input type="radio" name="q3_4" value="correct"> A. Sama-sama nilang ginabayan ang matanda at tinulungan ang bata<br>
+                    <input type="radio" name="q3_4" value="wrong" data-feedback="Mali. Ang diwa ng bayanihan sa kwento ay ang kusang-loob na pagtulong nina Alvin, Hazel, at James sa mga nangangailangan sa kalsada."> B. Binigyan nila ng pera ang matanda para mag-tricycle<br>
+                    <div id="msg3_4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Ano ang ipinapakita ng kuwento tungkol sa kultura ng bayanihan sa Pilipinas?</b></p>
+                    <textarea class="form-control" id="q3_5_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_5" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>6. Paano ipinakita ng mga tauhan ang malasakit sa damdamin ng matanda?</b></p>
+                    <textarea class="form-control" id="q3_6_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Bakit mahalaga ang pagtulong sa kapwa kahit sa maliliit na paraan?</b></p>
+                    <textarea class="form-control" id="q3_7_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Naranasan mo na bang tumulong sa taong naliligaw o nangangailangan? Ano ang ginawa mo?</b></p>
+                    <textarea class="form-control" id="q3_8_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Paano mo maipapakita ang bayanihan sa inyong barangay o paaralan?</b></p>
+                    <textarea class="form-control" id="q3_9_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_9" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">III. Pagninilay</h5>
+
+                <div class="quiz-item">
+                    <p><b>10. Ano ang pinakamahalagang aral na natutunan mo sa kwento?</b></p>
+                    <textarea class="form-control" id="q3_10_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_10" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>11. Paano nakakatulong ang pagtulong sa pagkakaisa ng komunidad?</b></p>
+                    <textarea class="form-control" id="q3_11_essay" rows="2" placeholder="Ipaliwanag ang iyong sagot..."></textarea>
+                    <div id="msg3_11" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStory3()" class="btn-submit mt-4">I-SUBMIT LAHAT NG SAGOT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateStory3() {
+            const form = document.getElementById('quizForm3');
+            let isAllCorrect = true;
+            let mcScore = 0;
+            let essayCount = 0;
+
+            // 1. Multiple Choice Validation (q3_1 to q3_4)
+            for (let i = 1; i <= 4; i++) {
+                const groupName = `q3_${i}`;
+                const msgId = `msg3_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const selected = form.querySelector(`input[name="${groupName}"]:checked`);
+
+                if (selected) {
+                    if (selected.value === "correct") {
+                        feedbackDiv.innerHTML = "✅ Tama! Mahusay ang iyong pag-intindi.";
+                        feedbackDiv.className = "feedback correct d-block";
+                        mcScore++;
+                    } else {
+                        const hint = selected.getAttribute('data-feedback');
+                        feedbackDiv.innerHTML = `❌ ${hint}`;
+                        feedbackDiv.className = "feedback wrong d-block";
+                        isAllCorrect = false;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Sagutan ang tanong na ito.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // 2. Essay Validation (q3_5 to q3_11)
+            for (let i = 5; i <= 11; i++) {
+                const essayId = `q3_${i}_essay`;
+                const msgId = `msg3_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const essayVal = document.getElementById(essayId).value.trim();
+
+                if (essayVal.length >= 10) {
+                    feedbackDiv.innerHTML = "💖 Maganda ang iyong paliwanag!";
+                    feedbackDiv.className = "feedback correct d-block";
+                    essayCount++;
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Paalala: Pakihabaan ang iyong paliwanag base sa aral ng kwento.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // Final Result
+            if (isAllCorrect && mcScore === 4 && essayCount === 7) {
+                alert("🎉 NAPAKAHUSAY! Natapos mo ang ikatlong kwento nang may buong pag-unawa.");
+            } else {
+                alert("Suriin ang mga feedback para maitama ang iyong mga sagot.");
+            }
+        }
+    </script>
+</div>
+<div class="tab-pane fade" id="story4">
+    <div class="story-card">
+        <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Ang Aral sa Tindahan”</h2>
+        
+        <div class="audio-player-container text-center mb-5">
+            <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+            <audio controls class="w-100 w-md-75">
+                <source src="{% static 'images/audio/tindahan.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Isang mainit na hapon sa Barangay Maligaya, nagpasya sina Harmon, Orly, Kenneth, at Perry na bumili ng meryenda sa tindahan. Masaya silang nag-uusap, ngunit hindi nila napansin na medyo nalilito sila sa pagbibilang ng kanilang dalang barya at pera.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Pagdating sa tindahan, nag-alala si Harmon dahil parang kulang ang kaniyang pera para sa tinapay at juice. Si Orly naman ay nagkamali sa pag-add ng kaniyang barya, habang si Kenneth ay naiinis dahil hindi niya matandaan ang kaniyang sukli.</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Si Perry, na mahilig sa Mathematics, ay lumapit at tinulungan sila. Ipinaliwanag niya kung paano gamitin ang simpleng <b>addition</b> para sa kabuuang presyo at <b>subtraction</b> para makuha ang tamang sukli. Dahil sa tulong ni Perry, naging maayos ang kanilang pamimili.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Napagtanto nila na ang Mathematics ay hindi lang para sa paaralan kundi mahalaga sa araw-araw. Nagdesisyon silang gumawa ng notebook para ilista ang mga presyo ng bilihin upang maging mas responsable sa paggamit ng pera at laging maging tapat sa pakikitungo sa kapwa.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT: Ang Aral sa Tindahan</h3>
+            <form id="quizForm4">
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Sino ang tauhan na tumulong sa kaniyang mga kaibigan sa pagbibilang?</b></p>
+                    <input type="radio" name="q4_1" value="wrong" data-feedback="Mali. Si Harmon ang unang nalito sa kaniyang barya. Si Perry ang mahusay sa Math na tumulong sa kanila."> A. Harmon<br>
+                    <input type="radio" name="q4_1" value="correct"> B. Perry<br>
+                    <div id="msg4_1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Ano ang naging problema nina Harmon, Orly, at Kenneth sa tindahan?</b></p>
+                    <input type="radio" name="q4_2" value="correct"> A. Nalilito sila sa pagbibilang at pagkwenta ng kanilang pera<br>
+                    <input type="radio" name="q4_2" value="wrong" data-feedback="Mali. Hindi sila nawalan ng wallet, sadyang nagkamali at nalito lang sila sa tamang pag-add at subtract ng halaga ng meryenda."> B. Nawala ang kanilang wallet habang naglalakad<br>
+                    <div id="msg4_2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Anong operasyon sa Mathematics ang ginamit ni Perry para malaman ang tamang sukli?</b></p>
+                    <input type="radio" name="q4_3" value="wrong" data-feedback="Mali. Multiplication ay para sa pagpaparami. Subtraction ang ginagamit para malaman ang natitirang pera o sukli."> A. Multiplication<br>
+                    <input type="radio" name="q4_3" value="correct"> B. Subtraction<br>
+                    <div id="msg4_3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Ano ang binuong plano ng magkakaibigan para sa susunod nilang pamimili?</b></p>
+                    <input type="radio" name="q4_4" value="correct"> A. Gagawa ng notebook para ilista ang mga presyo ng bilihin<br>
+                    <input type="radio" name="q4_4" value="wrong" data-feedback="Mali. Napagkasunduan nilang maglista sa notebook para hindi na sila muling malito sa susunod na punta sa tindahan."> B. Hindi na muna sila bibili ng meryenda sa labas<br>
+                    <div id="msg4_4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Paano nagagamit ang addition at subtraction sa totoong buhay base sa kuwento?</b></p>
+                    <textarea class="form-control" id="q4_5_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg4_5" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>6. Bakit mahalaga ang tamang pagbibilang ng pera kapag tayo ay namimili?</b></p>
+                    <textarea class="form-control" id="q4_6_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg4_6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Ano ang damdamin nina Harmon nang matulungan sila ni Perry? Bakit?</b></p>
+                    <textarea class="form-control" id="q4_7_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg4_7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Paano nakakatulong ang Mathematics sa pagiging responsable sa pera?</b></p>
+                    <textarea class="form-control" id="q4_8_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg4_8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Ano ang gagawin mo kung sobra ang sukli na ibinigay sa iyo sa tindahan?</b></p>
+                    <textarea class="form-control" id="q4_9_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg4_9" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">III. Pagninilay</h5>
+
+                <div class="quiz-item">
+                    <p><b>10. Ano ang natutunan mo tungkol sa pagtutulungan sa kapwa sa oras ng pagkalito?</b></p>
+                    <textarea class="form-control" id="q4_10_essay" rows="2" placeholder="Isulat ang iyong pagninilay..."></textarea>
+                    <div id="msg4_10" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStory4()" class="btn-submit mt-4">I-SUBMIT LAHAT NG SAGOT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateStory4() {
+            const form = document.getElementById('quizForm4');
+            let isAllCorrect = true;
+            let mcScore = 0;
+            let essayCount = 0;
+
+            // Multiple Choice (q4_1 to q4_4)
+            for (let i = 1; i <= 4; i++) {
+                const groupName = `q4_${i}`;
+                const msgId = `msg4_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const selected = form.querySelector(`input[name="${groupName}"]:checked`);
+
+                if (selected) {
+                    if (selected.value === "correct") {
+                        feedbackDiv.innerHTML = "✅ Tama! Napakagaling ng iyong obserbasyon.";
+                        feedbackDiv.className = "feedback correct d-block";
+                        mcScore++;
+                    } else {
+                        const hint = selected.getAttribute('data-feedback');
+                        feedbackDiv.innerHTML = `❌ ${hint}`;
+                        feedbackDiv.className = "feedback wrong d-block";
+                        isAllCorrect = false;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Pakisagutan ang tanong na ito.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // Essay Validation (q4_5 to q4_10)
+            for (let i = 5; i <= 10; i++) {
+                const essayId = `q4_${i}_essay`;
+                const msgId = `msg4_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const essayVal = document.getElementById(essayId).value.trim();
+
+                if (essayVal.length >= 10) {
+                    feedbackDiv.innerHTML = "💖 Maganda at makabuluhan ang iyong sagot!";
+                    feedbackDiv.className = "feedback correct d-block";
+                    essayCount++;
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Paalala: Pakipaliwanag nang mas malalim ang iyong sagot.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            if (isAllCorrect && mcScore === 4 && essayCount === 6) {
+                alert("🎉 Pagbati! Matagumpay mong natapos ang Ika-apat na Kwento!");
+            } else {
+                alert("May mga kailangang ayusin o punan sa iyong mga sagot. Pakitingnan ang mga paalala.");
+            }
+        }
+    </script>
+</div>
+      <div class="tab-pane fade" id="story5">
+    <div class="story-card">
+        <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Ang Agham sa Likod ng Ating Mundo”</h2>
+        
+        <div class="audio-player-container text-center mb-5">
+            <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+            <audio controls class="w-100 w-md-75">
+                <source src="{% static 'images/audio/agham.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Sa Mataas na Paaralan ng Tarlac City, magkaka-klase nina Maj, April, Jairo, at Nica si Cameron. Kilala si Cameron bilang isang bully na madalas mang-insulto sa kaniyang mga kaklase kapag may group activity sa asignaturang Science.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Nagtalaga ang guro ng proyekto tungkol sa <b>Renewable Energy</b>—ang paggawa ng wind turbine. Habang nagtutulungan ang grupo nina Maj gamit ang <i>scientific method</i>, si Cameron naman ay panay ang panunukso at pagsasabi na sila ay mabibigo.</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Isang hapon, aksidenteng naputol ni Cameron ang wire ng proyekto nina Maj. Sa halip na magalit, tinanggap ng grupo ang kaniyang paghingi ng paumanhin at pinayagan siyang tumulong sa pag-aayos. Dito natutunan ni Cameron na mas masaya ang magtulungan kaysa mang-api.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Nang ipresenta ang proyekto, gumana ang wind turbine at naiilawan ang bombilya. Higit sa markang nakuha, natutunan nila ang halaga ng empatiya, respeto, at pagtanggap sa bawat isa, kahit sa mga taong nagkamali noon.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT: Ang Agham sa Likod ng Ating Mundo</h3>
+            <form id="quizForm5">
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Ano ang pangunahing proyekto na itinalaga ng guro sa Science?</b></p>
+                    <input type="radio" name="q5_1" value="wrong" data-feedback="Mali. Ang proyekto ay tungkol sa Renewable Energy, partikular ang paggawa ng wind turbine."> A. Paggawa ng Solar Panel<br>
+                    <input type="radio" name="q5_1" value="correct"> B. Paggawa ng Wind Turbine<br>
+                    <div id="msg5_1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Paano naging bahagi ng grupo si Cameron sa bandang huli?</b></p>
+                    <input type="radio" name="q5_2" value="correct"> A. Humingi siya ng paumanhin matapos maputol ang wire at tumulong sa pag-aayos<br>
+                    <input type="radio" name="q5_2" value="wrong" data-feedback="Mali. Sinasabi sa kwento na nakaramdam siya ng hiya at siya mismo ang nag-alok na tumulong ayusin ang nasirang wire."> B. Pinilit siya ng guro na sumali sa grupo nina Maj<br>
+                    <div id="msg5_2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Ano ang naging reaksyon ni Maj nang tuksuhin sila ni Cameron sa simula?</b></p>
+                    <input type="radio" name="q5_3" value="wrong" data-feedback="Mali. Si Maj ay ngumiti lang at sinabing tingnan na lang ni Cameron ang magiging resulta ng kanilang gawa."> A. Nakipag-away siya at nagalit<br>
+                    <input type="radio" name="q5_3" value="correct"> B. Nanatili siyang positibo at hinamon si Cameron na tingnan ang resulta<br>
+                    <div id="msg5_3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Ano ang mahalagang aral na natutunan ni Cameron sa pagtatapos ng kwento?</b></p>
+                    <input type="radio" name="q5_4" value="correct"> A. Ang kahalagahan ng pakikipagtulungan at pagtanggap sa iba<br>
+                    <input type="radio" name="q5_4" value="wrong" data-feedback="Mali. Bagama't gumana ang turbine, ang mas malalim na aral para kay Cameron ay ang pakikipagtulungan at pag-iwas sa pang-aapi."> B. Mas mabilis gumawa ng proyekto kapag mag-isa lang<br>
+                    <div id="msg5_4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Paano nakatulong ang scientific method (obserbasyon, hypothesis, etc.) sa proyekto nina Maj?</b></p>
+                    <textarea class="form-control" id="q5_5_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg5_5" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>6. Bakit mahalaga ang pagpapakita ng empatiya at pagtanggap kahit sa mga taong naging 'bully' sa atin?</b></p>
+                    <textarea class="form-control" id="q5_6_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg5_6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Ano ang naramdaman ng grupo nang gumana ang kanilang wind turbine? Bakit?</b></p>
+                    <textarea class="form-control" id="q5_7_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg5_7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Naranasan mo na bang magkaroon ng mahirap na kasama sa grupo? Paano mo ito hinarap nang may respeto?</b></p>
+                    <textarea class="form-control" id="q5_8_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg5_8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Paano makakatulong ang pagtutulungan sa pagbuo ng mas matagumpay na proyekto sa paaralan?</b></p>
+                    <textarea class="form-control" id="q5_9_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg5_9" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">III. Pagninilay</h5>
+
+                <div class="quiz-item">
+                    <p><b>10. Sa iyong palagay, paano nababago ng pagtutulungan ang ugali ng isang tao?</b></p>
+                    <textarea class="form-control" id="q5_10_essay" rows="2" placeholder="Isulat ang iyong pagninilay..."></textarea>
+                    <div id="msg5_10" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStory5()" class="btn-submit mt-4">I-SUBMIT LAHAT NG SAGOT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateStory5() {
+            const form = document.getElementById('quizForm5');
+            let isAllCorrect = true;
+            let mcScore = 0;
+            let essayCount = 0;
+
+            // Multiple Choice Validation (q5_1 to q5_4)
+            for (let i = 1; i <= 4; i++) {
+                const groupName = `q5_${i}`;
+                const msgId = `msg5_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const selected = form.querySelector(`input[name="${groupName}"]:checked`);
+
+                if (selected) {
+                    if (selected.value === "correct") {
+                        feedbackDiv.innerHTML = "✅ Tama! Mahusay ang iyong pagsusuri sa kwento.";
+                        feedbackDiv.className = "feedback correct d-block";
+                        mcScore++;
+                    } else {
+                        const hint = selected.getAttribute('data-feedback');
+                        feedbackDiv.innerHTML = `❌ ${hint}`;
+                        feedbackDiv.className = "feedback wrong d-block";
+                        isAllCorrect = false;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Pakisagutan ang tanong na ito.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // Essay Validation (q5_5 to q5_10)
+            for (let i = 5; i <= 10; i++) {
+                const essayId = `q5_${i}_essay`;
+                const msgId = `msg5_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const essayVal = document.getElementById(essayId).value.trim();
+
+                if (essayVal.length >= 10) {
+                    feedbackDiv.innerHTML = "💖 Napakahusay! Ramdam ang iyong pag-unawa.";
+                    feedbackDiv.className = "feedback correct d-block";
+                    essayCount++;
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Paalala: Pakipaliwanag nang mas mabuti ang iyong sagot.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            if (isAllCorrect && mcScore === 4 && essayCount === 6) {
+                alert("🎉 Kamangha-mangha! Matagumpay mong natapos ang Ikalimang Kwento.");
+            } else {
+                alert("Suriin ang mga pulang marka sa ibaba upang makumpleto ang pagsusulit.");
+            }
+        }
+    </script>
+</div>
+<div class="tab-pane fade" id="story6">
+    <div class="story-card">
+        <h2 class="text-center mb-4" style="color: var(--blue); font-weight: 900;">“Sa Landas ng Solar System”</h2>
+        
+        <div class="audio-player-container text-center mb-5">
+            <p class="mb-2"><b>🔊 Pakinggan ang Kwento:</b></p>
+            <audio controls class="w-100 w-md-75">
+                <source src="{% static 'images/audio/solarsystem.mp3' %}" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <div class="story-text">
+            <div class="para-row">
+                <img src="{% static 'images/rightside.png' %}" class="para-image">
+                <p>Sina Urduha at Mayan ay magkaibigan sa ikalimang baitang na parehong mahilig sa Science. Sabik na sabik sila sa kanilang bagong paksa tungkol sa <b>Solar System</b>—ang mga planeta, araw, buwan, at ang misteryo ng gravity.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/kaagapay.png' %}" class="para-image">
+                <p>Binigyan sila ng proyekto na gumawa ng modelo ng Solar System. Habang nagtatrabaho, napansin ni Urduha na nalilito si Mayan sa pagkakaayos ng mga planeta. Inakala ni Mayan na Venus o Mars ang pinakamalapit sa Araw, kaya matiyagang ipinaliwanag ni Urduha ang tamang pagkakasunod-sunod.</p>
+            </div>
+
+            <div class="para-row">
+                <img src="{% static 'images/about.png' %}" class="para-image">
+                <p>Ginamit nila ang bola, styrofoam, at karton para sa kanilang modelo. Tinuruan ni Urduha si Mayan kung paano gumagana ang <b>orbit</b> at <b>gravity</b>. Sa prosesong ito, natutunan ni Urduha ang maging mapagpasensya, habang si Mayan naman ay naging mas masigasig sa pag-aaral.</p>
+            </div>
+
+            <div class="para-row reverse">
+                <img src="{% static 'images/homeback.png' %}" class="para-image">
+                <p>Nang ipresenta nila ang proyekto, ipinaliwanag din nila kung bakit nagkakaroon ng <i>seasons</i> sa Earth dahil sa tilt nito. Humanga ang guro hindi lang sa kanilang kaalaman, kundi sa ipinakita nilang respeto at malasakit sa isa't isa habang natututo.</p>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="question-section">
+            <h3 class="text-center mb-5" style="color: var(--blue); font-weight: 800;">📝 PAGSUSULIT:  Sa Landas ng Solar System</h3>
+            <form id="quizForm6">
+                <h5 class="mb-3 text-primary">I. Pag-unawa sa Tauhan at Pangyayari</h5>
+                
+                <div class="quiz-item">
+                    <p><b>1. Ano ang tamang pagkakasunod-sunod ng unang apat na planeta mula sa Araw?</b></p>
+                    <input type="radio" name="q6_1" value="correct"> A. Mercury, Venus, Earth, Mars<br>
+                    <input type="radio" name="q6_1" value="wrong" data-feedback="Mali. Ayon sa paliwanag ni Urduha sa talata 2, ang Mercury ang pinakamalapit, kasunod ang Venus, Earth, at Mars."> B. Venus, Mercury, Mars, Earth<br>
+                    <div id="msg6_1" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>2. Anong mahalagang katangian ang ipinakita ni Urduha habang tinuturuan ang nalilitong kaibigan?</b></p>
+                    <input type="radio" name="q6_2" value="wrong" data-feedback="Mali. Sa talata 3, binanggit na natutong maging matiyaga at mapagpasensya si Urduha sa pagpapaliwanag kay Mayan."> A. Pagiging mabilis magtrabaho<br>
+                    <input type="radio" name="q6_2" value="correct"> B. Pagiging matiyaga at mapagpasensya<br>
+                    <div id="msg6_2" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>3. Bakit nagkakaroon ng iba't ibang 'seasons' o panahon sa ating mundo (Earth)?</b></p>
+                    <input type="radio" name="q6_3" value="correct"> A. Dahil sa pagkaka-tilt o pagkakahilig ng axis ng Earth<br>
+                    <input type="radio" name="q6_3" value="wrong" data-feedback="Mali. Base sa presentasyon nila sa klase, ang seasons ay dulot ng tilt ng Earth habang ito ay umiikot sa araw."> B. Dahil malayo ang Earth sa buwan<br>
+                    <div id="msg6_3" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>4. Ano ang ginamit nilang materyales sa pagbuo ng modelo?</b></p>
+                    <input type="radio" name="q6_4" value="correct"> A. Bola, styrofoam, at karton<br>
+                    <input type="radio" name="q6_4" value="wrong" data-feedback="Mali. Sinasabi sa talata 3 na gumamit sila ng bola, styrofoam, at karton para magmukhang mga planeta at araw ang kanilang modelo."> B. Putik, kahoy, at kawayan<br>
+                    <div id="msg6_4" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">II. Pagsusuri at Application (Essay)</h5>
+                
+                <div class="quiz-item">
+                    <p><b>5. Paano ipinakita nina Urduha at Mayan ang pagtutulungan sa kanilang proyekto?</b></p>
+                    <textarea class="form-control" id="q6_5_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg6_5" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>6. Sa iyong palagay, bakit kailangang maging mapagpasensya kapag nagtuturo sa kapwa?</b></p>
+                    <textarea class="form-control" id="q6_6_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg6_6" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>7. Paano nakatulong ang paggawa ng 'modelo' para mas maintindihan nila ang Science?</b></p>
+                    <textarea class="form-control" id="q6_7_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg6_7" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>8. Naranasan mo na bang mahirapan sa isang lesson? Paano ka tinulungan ng iyong kaibigan o guro?</b></p>
+                    <textarea class="form-control" id="q6_8_essay" rows="2" placeholder="Ibahagi ang iyong karanasan..."></textarea>
+                    <div id="msg6_8" class="feedback"></div>
+                </div>
+
+                <div class="quiz-item">
+                    <p><b>9. Ano ang gagawin mo kung makita mong nahihirapan ang iyong kaklase sa isang gawain?</b></p>
+                    <textarea class="form-control" id="q6_9_essay" rows="2" placeholder="Ipaliwanag..."></textarea>
+                    <div id="msg6_9" class="feedback"></div>
+                </div>
+
+                <h5 class="mb-3 mt-5 text-primary">III. Pagninilay</h5>
+
+                <div class="quiz-item">
+                    <p><b>10. Ano ang natutunan mo tungkol sa kahalagahan ng pag-unawa sa uniberso at paggalang sa kapwa?</b></p>
+                    <textarea class="form-control" id="q6_10_essay" rows="2" placeholder="Isulat ang iyong pagninilay..."></textarea>
+                    <div id="msg6_10" class="feedback"></div>
+                </div>
+
+                <button type="button" onclick="validateStory6()" class="btn-submit mt-4">I-SUBMIT LAHAT NG SAGOT</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function validateStory6() {
+            const form = document.getElementById('quizForm6');
+            let isAllCorrect = true;
+            let mcScore = 0;
+            let essayCount = 0;
+
+            // Multiple Choice Validation (q6_1 to q6_4)
+            for (let i = 1; i <= 4; i++) {
+                const groupName = `q6_${i}`;
+                const msgId = `msg6_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const selected = form.querySelector(`input[name="${groupName}"]:checked`);
+
+                if (selected) {
+                    if (selected.value === "correct") {
+                        feedbackDiv.innerHTML = "✅ Tama! Mahusay ang iyong kaalaman sa Solar System.";
+                        feedbackDiv.className = "feedback correct d-block";
+                        mcScore++;
+                    } else {
+                        const hint = selected.getAttribute('data-feedback');
+                        feedbackDiv.innerHTML = `❌ ${hint}`;
+                        feedbackDiv.className = "feedback wrong d-block";
+                        isAllCorrect = false;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Mangyaring sagutan ang tanong na ito.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            // Essay Validation (q6_5 to q6_10)
+            for (let i = 5; i <= 10; i++) {
+                const essayId = `q6_${i}_essay`;
+                const msgId = `msg6_${i}`;
+                const feedbackDiv = document.getElementById(msgId);
+                const essayVal = document.getElementById(essayId).value.trim();
+
+                if (essayVal.length >= 10) {
+                    feedbackDiv.innerHTML = "💖 Napakaganda ng iyong paliwanag!";
+                    feedbackDiv.className = "feedback correct d-block";
+                    essayCount++;
+                } else {
+                    feedbackDiv.innerHTML = "⚠️ Paalala: Pakihabaan ang iyong sagot para mas maipahayag ang iyong saloobin.";
+                    feedbackDiv.className = "feedback wrong d-block";
+                    isAllCorrect = false;
+                }
+            }
+
+            if (isAllCorrect && mcScore === 4 && essayCount === 6) {
+                alert("🎉 CONGRATULATIONS! Matagumpay mong natapos ang huling kwento at ang buong serye!");
+            } else {
+                alert("May ilang sagot na kailangang suriin. Pakitingnan ang mga feedback.");
+            }
+        }
+    </script>
+</div>
+    </div>
+</div>
+<script>
+    // Isang function para sa lahat ng kwento
+    function validateStoryQuiz(formId) {
+        const form = document.getElementById(formId);
+        let mcCorrect = 0;
+        let totalMC = 0;
+        let essayDone = 0;
+        let totalEssay = 0;
+
+        // I-reset ang lahat ng feedback
+        form.querySelectorAll('.feedback').forEach(f => {
+            f.style.display = 'none';
+            f.className = 'feedback';
+        });
+
+        // 1. Validate Multiple Choice
+        const radioGroups = [...new Set([...form.querySelectorAll('input[type="radio"]')].map(r => r.name))];
+        totalMC = radioGroups.length;
+
+        radioGroups.forEach(groupName => {
+            const checked = form.querySelector(`input[name="${groupName}"]:checked`);
+            const msgElement = form.querySelector(`#msg${groupName.match(/\d+/)}`);
+
+            if (checked) {
+                if (checked.value === "correct") {
+                    msgElement.innerHTML = "✨ **Tama!** Mahusay ang iyong pag-unawa.";
+                    msgElement.className = "feedback correct d-block";
+                    mcCorrect++;
+                } else {
+                    const hint = checked.getAttribute('data-feedback');
+                    msgElement.innerHTML = `❌ **Mali.** ${hint}`;
+                    msgElement.className = "feedback wrong d-block";
+                }
+            } else {
+                msgElement.innerHTML = "⚠️ Pakisagutan ang tanong na ito.";
+                msgElement.className = "feedback wrong d-block";
+            }
+        });
+
+        // 2. Validate Essay
+        const essays = form.querySelectorAll('textarea');
+        totalEssay = essays.length;
+
+        essays.forEach(essay => {
+            const msgId = `msg${essay.id.match(/\d+/)}`;
+            const msgElement = document.getElementById(msgId);
+            
+            if (essay.value.trim().length > 10) {
+                msgElement.innerHTML = "💖 **Salamat!** Napakaganda ng iyong paliwanag.";
+                msgElement.className = "feedback correct d-block";
+                essayDone++;
+            } else {
+                msgElement.innerHTML = "⚠️ **Paalala:** Dagdagan pa ang iyong sagot base sa kwento.";
+                msgElement.className = "feedback wrong d-block";
+            }
+        });
+
+        // Result Summary
+        if (mcCorrect === totalMC && essayDone === totalEssay) {
+            alert("🎉 NAPAKAHUSAY! Natapos mo nang tama ang lahat ng tanong.");
+        } else {
+            alert("Suriin ang mga feedback sa ibaba para maitama ang iyong mga sagot.");
+        }
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const totalPages = 54; 
+        const container = document.getElementById('talahanayan1Container');
+        const indicator = document.getElementById('pageIndicator');
+
+        // Siguraduhing malinis ang container bago lagyan
+        container.innerHTML = "";
+
+        for (let i = 1; i <= totalPages; i++) {
+            let pageNum = i.toString().padStart(4, '0'); 
+            const div = document.createElement('div');
+            
+            // Lahat ng pahina ay ilalagay natin, hindi hanggang 3 lang
+            div.className = `carousel-item ${i === 1 ? 'active' : ''}`;
+            
+            div.innerHTML = `
+                <div class="slide-wrapper" style="background: #fff; display: flex; justify-content: center; align-items: center;">
+                    <img src="/static/images/Aralin-PPT_page-${pageNum}.jpg" 
+                         class="d-block w-100 slide-img" 
+                         loading="lazy" 
+                         alt="Pahina ${i}"
+                         onerror="this.src='https://via.placeholder.com/800x450?text=Hindi+Mahanap+ang+Larawan+${i}'">
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        // Initialize Carousel (Para masiguradong gumagana ang click)
+        const myCarousel = new bootstrap.Carousel(document.getElementById('aralinCarousel'), {
+            interval: false, // Hindi kusa maglilipat
+            wrap: true      // Babalik sa simula pag natapos
+        });
+
+        // Update Page Indicator
+        const carouselEl = document.getElementById('aralinCarousel');
+        carouselEl.addEventListener('slide.bs.carousel', function (event) {
+            indicator.innerText = `Pahina: ${event.to + 1} / ${totalPages}`;
+        });
+    });
+</script>
+
+<style>
+    /* MAXIMIZE IMAGE SIZE */
+    .slide-img {
+        max-height: 85vh; /* Gagamitin ang 85% ng screen height */
+        object-fit: contain; /* Hindi madi-distort ang text ng aralin */
+        width: 100%;
+        display: block;
+    }
+
+    .slide-wrapper {
+        min-height: 400px;
+        padding: 5px;
+    }
+
+    /* CUSTOM NAVIGATION STYLE (Para hindi nakaharang sa text) */
+    .custom-nav {
+        width: 8% !important; /* Mas maliit na click area pero kitang kita */
+        opacity: 0.8;
+        z-index: 10 !important; /* Siguradong nasa ibabaw para mapindot */
+    }
+
+    .nav-circle {
+        background: rgba(0, 123, 255, 0.6); /* Blueish transparent */
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .custom-nav:hover .nav-circle {
+        background: rgba(0, 123, 255, 1);
+        transform: scale(1.1);
+    }
+
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        width: 25px;
+        height: 25px;
+    }
+
+    /* FIX FOR CLICK ISSUE */
+    .carousel-inner {
+        cursor: default;
+    }
+
+    /* MOBILE OPTIMIZATION */
+    @media (max-width: 768px) {
+        .slide-img {
+            max-height: 60vh;
+        }
+        .nav-circle {
+            width: 40px;
+            height: 40px;
+        }
+        h2 { font-size: 1.1rem !important; }
+    }
+</style>
+{% endblock %}

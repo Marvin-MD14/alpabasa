@@ -11,4 +11,6 @@ urlpatterns = [
 
     # ✅ TTS path
     path('speak/', tts.speak, name='speak'),
+
+    path('talahayanan/', views.talahayanan, name='talahayanan'),
 ]
